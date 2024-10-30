@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sidebar layout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+           
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            background-color: #ffffff; /* Warna terang */
+            height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Dark/Light Mode */
+        body.dark-mode {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .sidebar {
+            background-color: #34495e;
+        }
+
+        body.dark-mode .main-content {
+            background-color: #2c3e50;
+            color:black;
+        }
+        body.dark-mode .main-content .card {
+            background-color:#2c3e50;
+            color:black;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: #fff;
+            padding: 10px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3spx;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar h4 {
+            text-align: left;
+            margin-bottom: 30px;
+            font-size:16;
+            color:#fff;
+        }
+       
+         .sidebar h2 {
+            text-align: left;
+            margin-bottom: 30px;
+            font-size:16;
+            color:#fff;
+        }
+        
+         .sidebar h3 {
+            text-align: left;
+            margin-bottom: 30px;
+            font-size:16;
+            color:#fff;
+        }
+
+        .nav-links {
+            list-style: none;
+            margin-bottom: auto;
+        }
+
+        .nav-links li {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .nav-links li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 400;
+            padding: 5px;
+            border-radius: 5px;
+            display: block;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links li a:hover {
+            background: #e74c3c;
+        }
+
+        /* Dropdown Menu */
+        .dropdown-content {
+            display: none;
+            background-color: #34495e;
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .dropdown-content a {
+            padding-left: 20px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e74c3c;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 7px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 7px;
+            top: 5px;
+            background: none;
+            border: none;
+            color: black;
+            cursor: pointer;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background-color:  #2c3e50;
+            color: white;
+            border: none;
+            width:40px;
+            heigth:15px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        /* Hamburger Button */
+        .sidebar-toggle {
+            background-color:  #2c3e50;
+            color: #fff;
+            border: none;
+             width:40px;
+            heigth:15px;
+            padding: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+            background: #ecf0f1;
+            overflow-y: auto;
+            width: calc(100% - 250px);
+            height: 100vh;
+            position: relative;
+            transition: margin-left 0.3s, width 0.3s;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 60px;
+            width: calc(100% - 60px);
+        }
+
+        .main-content section {
+            display: none;
+        }
+
+        .main-content section.active {
+            display: block;
+        }
+
+        .main-content h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+           
+        }
+
+        .main-content .card {
+            flex:0 0 250px;
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .main-content .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .main-content .card p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .main-content .card img {
+         width:100px;
+         height:100px;
+        }
+        .main-content .card iframe {
+         width:350px;
+         height:400px;
+        }
+
+        /* Floating Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .sidebar.collapsed {
+                width: 50px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+
+            .sidebar.collapsed ~ .main-content {
+                margin-left: 50px;
+                width: calc(100% - 50px);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 150px;
+            }
+
+            .sidebar.collapsed {
+                width: 40px;
+            }
+
+            .main-content {
+                margin-left: 150px;
+                width: calc(100% - 150px);
+            }
+
+            .sidebar.collapsed ~ .main-content {
+                margin-left: 40px;
+                width: calc(100% - 40px);
+            }
+        }
+
+         .form-control {
+            margin-bottom: 15px;
+        }
+        .form-control label {
+            display: block;
+        }
+        .form-control input, .form-control textarea {
+            width: 50%;
+            padding: 8px;
+            border:1px solid #333;
+            color:black;
+        }
+       
+    .form-control button{
+    color: #fff;
+    text-decoration: none;
+    background-color:dodgerblue;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    padding: 7px 18px;
+    border-radius: 5px;
+    border:none;
+    cursor: pointer;
+ } 
+.form-control button:hover{
+background:#E3651D;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+         <h4><img src="layout3.png"align="left"style="width:150px;height=100px;"></h4>
+       
+        <button class="sidebar-toggle" onclick="toggleSidebar()"><font size="4"align="right"style="color:white;"><i class="fas fa-dedent"></i></font></button>
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleDarkMode()"><font size="4"align="right"style="color:white;"><i class="fas fa-sun"></i></font></button>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="">
+            <button onclick="searchFunction()"><font size="4"align="right"style="color:black;"><i class="fas fa-search search-icon"></i></font></button>
+        </div>
+        <h4><p align="left">Menu</p>
+        <ul class="nav-links">
+            <li class="dropdown">
+                 <a onclick="showContent('home')"><font size="4"align="right"style="color:white;"><i class="fas fa-home"></i></font>            Home</a>
+               
+            </li>
+             <li class="dropdown">
+                <a><font size="4"align="right"style="color:white;"><i class="fas fa-user-circle"></i></font>  About</a>
+                <div class="dropdown-content">
+                    <a onclick="showContent('profil')">Profil</a>
+                    <a onclick="showContent('about')">Tentang Saya</a>
+                </div>
+            </li>
+             <li class="dropdown">
+                <a><font size="4"align="right"style="color:white;"><i class="fas fa-briefcase"></i></font>  Portfolio</a>
+                <div class="dropdown-content">
+                    <a onclick="showContent('project')">Project Portfolio</a>
+                    <a onclick="showContent('web')">Project Website</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a><font size="4"align="right"style="color:#fff;"><i class="fas fa-tools"></i></font>   Services</a>
+                <div class="dropdown-content">
+                    <a onclick="showContent('frontend')">Frontend</a>
+                    <a onclick="showContent('backend')">Backend</a>
+                </div>
+            </li>
+               <li class="dropdown">
+                <a><font size="4"align="right"style="color:white;"><i class="fas fa-shopping-cart"></i></font>  Product</a>
+                <div class="dropdown-content">
+                    <a onclick="showContent('product')">Produk</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a><font size="4"align="right"style="color:#fff;"><i class="fas fa-phone"></i></font>     Contact</a>
+                <div class="dropdown-content">
+                    <a onclick="showContent('contact-form')">Contact Form</a>
+                    <a onclick="showContent('maps')">Google Map</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+  <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <section id="home" class="active">
+            <h1><p align="center"><img src="layout8.jfif"style="width:150px;height:150px;border-radius:50%;"><br>Selamat Datang</p></h1>
+            <div class="card">
+                <h3><p align="center">Jelajahi semua menu untuk mencari hal menarik diwebsite ini</p<></h3>
+                <p><small><p align="center">Kami juga menawarkan berbagai kebutuhan produk barang dan jasa.Lihat semua menu.</p></small></p>
+            </div>
+        </section>
+
+          <section id="profil">
+            <h2><p align="center"><img src="layout1.png"align=""style="width:70px;height=70px;"><br><br>Profil</h2></p>
+            <div class="card">
+                <h3><p align="center">I'm Ilham</p></h3>
+                <p><p align="center">Saya seorang pengembang front-end. Saya telah mendedikasikan diri saya untuk berkreasi situs web yang menarik secara visual dan ramah pengguna. Saya selalu terbuka untuk menggunakan keahlian baru dan saya percaya pada kekuatan kolaborasi, Bekerja sama dengan desainer dan pengembang back-end untuk memberikan solusi yang kohesif dan efektif.</p></p>
+             </div>
+            <div class="card">
+               <p><font size="3"align="right"style="color:lime;"><i class="fab fa-whatsapp"></i>:0878-7047-7738</font></p>
+                <p><font size="3"align="right"style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);-webkit-background-clip:text;color:transparent;"><i class="fab fa-instagram"></i>:@adilz_yx</font></p>
+                <p><font size="3"align="right"style="color:#1877F2;"><i class="fab fa-facebook"></i>:@Han Dewei</font></p>
+                <p><font size="3"align="right"style="color:red;"><i class="fab fa-youtube"></i>:@IL_cook</font></p>    
+          </div>
+        </section>
+
+          <section id="about">
+            <h2><p align="center"><img src="layout1.png"align=""style="width:70px;height=70px;"><br><br>Profil</p></h2>
+            <div class="card">
+                <h3><p align="center">Tentang Saya</p></h3>
+                <p><p align="center">Nama:Ilham</p>
+                   <p align="center">Siswa:SMK Inovasi Mandiri</p>
+                   <p align="center">Kelas:12<br>Jurusan:RPL(Rekayasa Perangkat Lunak)</p>
+                   <p align="center">Alamat:Sumedang</p>
+                   <p align="center">Hobi:Membaca</p></p>
+            </div>
+           <h2><p align="center">About Me</p></h2>
+          <div class="card">
+          <p align="center"><img src="layout4.jpg"style="width:305px;height:303px;border-radius:7px;"></p>
+         </div> 
+          </section>
+
+         <section id="project">
+            <h2></h2>
+            <div class="card">
+                <h3>Portfolio Me</h3>
+                  <img src="layout5.jpg"style="width:150px;height:200px;border-radius:7px;">
+                <p><a href="portpolio.html"><button type="submit"><font size="4"align="right"style="background:#e74c3c;border:none;width:100px;"><b>Lihat</b></font></button></a></p>
+            </div>
+              <div class="card">
+                <h3>Portfolio Me</h3>
+                  <img src="layout6.jpg"style="width:150px;height:200px;border-radius:7px;">
+                <p><a href="vortpolio.html"><button type="submit"><font size="4"align="right"style="background:#e74c3c;border:none;width:100px;"><b>Lihat</b></font></button></a></p>
+            </div>
+             <div class="card">
+                <h3>Portfolio Me</h3>
+                  <img src="layout7.jpg"style="width:150px;height:200px;border-radius:7px;">
+                <p><a href="fortpolio.html"><button type="submit"><font size="4"align="right"style="background:#e74c3c;border:none;width:100px;"><b>Lihat</b></font></button></a></p>
+            </div>
+        </section>
+
+          <section id="web">
+            <h2>Project Web</h2>
+            <div class="card">
+                <h3>Website</h3>
+                <p>This is the dashboard section. Click on other items to see more content.</p>
+            </div>
+        </section>
+
+        <section id="frontend">
+            <h2></h2>
+            <div class="card">
+                <h3><p align="center">Jasa Desain Website/Developer</p></h3>
+                  <p><p align="center">Harga terjangkau dan bisa di diskusikan,sesuai dengan kesepakatan bersama.Hubungi no dibawah ini</p></p>
+                <p><p align="center"><font size="3"align="right"style="color:lime;"><i class="fab fa-whatsapp"></i>:0878-7047-7738</font></p></p>
+            </div>
+        </section>
+
+        <section id="backend">
+            <h2></h2>
+            <div class="card">
+                <h3><p align="center">Jasa Input Data/Hosting Website</P></h3>
+                 <p><p align="center">Harga terjangkau dan bisa di diskusikan,sesuai dengan kesepakatan bersama.Hubungi no dibawah ini</p></P>
+                <p><p align="center"><font size="3"align="right"style="color:lime;"><i class="fab fa-whatsapp"></i>:0878-7047-7738</font></p></p>
+            </div>
+        </section>
+
+        <section id="product">
+            <h1></h1>
+            <div class="card">
+                <h3>Produk Barang Kami</h3>
+                <img src="i.jpg"style="width:200px;height:200px;border-radius:9px;">
+                <p>Produk murah dan berkualitas harga terjangkau</p>
+            </div>
+        </section>
+
+        <section id="contact-form">
+            <h2></h2>
+             <div class="card">
+             <h2><p align="center">Hubungi Kami Sekarang</p></h2>
+             <font size="4"align="right"style="color:#333;"><p align="center"><i class="fab fa-whatsapp"></i>0878-7047-77**</font></p>
+             <font size="4"align="right"style="color:#333;"><p align="center"><i class="fas fa-envelope"></i>ihap968@gmail.com</font></p>
+             <font size="4"align="right"style="color:#333;"><p align="center"><i class="fas fa-phone"></i>0880-******</font></p>
+             <font size="4"align="right"style="color:#333;"><p align="center"><i class="fab fa-github"></i>IL345</font></p>
+             </div>
+            <div class="card">
+                <h3>Ikuti Kami</h3>
+<a href="https://www.facebook.com/profile.php?id=61558576457158"><font size="6"align="right"style="color:#1877F2;"><i class="fab fa-facebook"></i></font></a>
+<a href="https://www.bing.com/ck/a?!&&p=752da3ba657615c4JmltdHM9MTcyNzkxMzYwMCZpZ3VpZD0xNWNjMWRmMS1kNzRjLTZiNTUtMWVmYS0wOGZjZDYxYTZhZDgmaW5zaWQ9NTE5NQ&ptn=3&ver=2&hsh=3&fclid=15cc1df1-d74c-6b55-1efa-08fcd61a6ad8&psq=twt&u=a1aHR0cHM6Ly90d2l0dGVyLmNvbS8_dHdfcD10d3QjOn46dGV4dD1Ud2l0dGVyIGlzIGEgc29jaWFsIHBsYXRmb3JtIHdoZXJlIHlvdSBjYW4gZm9sbG93IHRvcGljcyw&ntb=1"><font size="6"align="right"style="color:dodgerblue;"><i class="fab fa-twitter"></i></font></a>
+<a href="https://www.instagram.com/dzin0982?igsh=YzljYTk1ODg3Zg=="><font size="6"align="right"style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);-webkit-background-clip:text;color:transparent;"><i class="fab fa-instagram"></i></font></a>
+<a href="https://www.youtube.com/@IL_cook"><font size="6"align="right"style="color:red;"><i class="fab fa-youtube"></i></font></a>         
+              </div>
+           <div class="card">
+ <h4>Message</h4>
+  <form>
+                <div class="form-control">
+                <label for="name">Nama:</label>
+                 <input type="text"id="name"name="name"placeholder="Nama"required>
+                  <div class="form-control">
+                <label for="email">email:</label>
+                 <input type="text"id="email"name="email"placeholder="Email"required>
+                  <div class="form-control">
+                 <label for="message">Pesan:</label>
+                 <textarea id="message"name="message"placeholder="message"required></textarea>
+                 </div>
+                 <button type="submit"><b><i class="fas fa-paper-plane"style="font-size:20px;"></i></b></font></button>
+                </form> 
+</div>
+        </section>
+
+          <section id="maps">
+            <div class="card">
+                <h3><i class="fas fa-map-marker-alt"></i> Alamat Kami</h3>
+                <p><b>Kantor Pusat:Kawasan Bintang Puspita Dwi Karya,Wanasari,Telukjambe Barat,Karawang,West Java 41361</b></p>
+                <p><b>Jam Operasional:Senin-Jumat,09:00-17.00</b></p>
+            </div>
+              <h2>Google Maps</h2>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15861.084240083806!2d107.23095864057538!3d-6.358951335875109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e699c2daafce231%3A0x3481ab3160f6a28b!2sPT%20Inoac%20Polytechno%20Indonesia%20Plant!5e0!3m2!1sid!2sid!4v1727400952300!5m2!1sid!2sid" width="350" height="400" style="border:1px solid black; border-radius:5px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+       </section>      
+
+    </div>
+
+    <script>
+        // Toggle Dark Mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Toggle Sidebar Collapse
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // Show Content
+        function showContent(sectionId) {
+            const sections = document.querySelectorAll('.main-content section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show scroll to top button on scroll
+        window.addEventListener('scroll', function () {
+            const scrollTopButton = document.getElementById('scroll-top');
+            if (window.scrollY > 300) {
+                scrollTopButton.style.display = 'block';
+            } else {
+                scrollTopButton.style.display = 'none';
+            }
+        });
+
+        // Search function
+        function searchFunction() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const sections = document.querySelectorAll('.main-content section');
+            sections.forEach(section => {
+                const textContent = section.innerText.toLowerCase();
+                if (textContent.includes(input)) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
